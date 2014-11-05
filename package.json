@@ -1,6 +1,6 @@
 {
   "name": "zetta-microphone-edison-driver",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "description": "Microphone edison driver for zetta",
   "main": "index.js",
   "scripts": {

@@ -18,32 +18,38 @@ Microphone.prototype.init = function(config) {
     .monitor('volume')
 
   var startTime = 0;
-  var maxValue = 0;
-  var minValue = 0;
+  var samples = [];
   function reset() {
     startTime = new Date().getTime();
-    maxValue = 0;
-    minValue = 3000;
+    samples = [];
+  }
+
+  function removeMin(samples) {
+    samples.sort(function(a,b) {
+      if (a > b) {
+        return 1;
+      } else if(a < b) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+    samples.splice(0, 1);
+    return samples;
   }
   
   reset();
   var self = this;
   setInterval(function() {
     var value = self._pin.read(); // 0-1024
+    samples.push(value);
 
-    if (value > maxValue) {
-      maxValue = value;
-    }
-    
-    if (value < minValue) {
-      minValue = value;
-    }
-    
     if (new Date().getTime() - startTime > SAMPLE_TIME) {
-      self.volume = (maxValue - minValue);
+      samples = removeMin(samples);
+      self.volume = (samples[samples.length-1] - samples[0]);
       reset();
     }
-  }, 25);
+  }, 5);
 
 };
 
